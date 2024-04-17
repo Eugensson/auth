@@ -2,6 +2,7 @@
 
 import * as z from "zod";
 import { useForm } from "react-hook-form";
+import { Eye, EyeOff } from "lucide-react";
 import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -23,9 +24,12 @@ import { CardWrapper } from "@/components/auth/card-wrapper";
 import { login } from "@/actions/login";
 
 export const LoginForm = () => {
+  const [isVisiblePass, setIsVisiblePass] = useState(false);
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
+
+  const toggleVisblePass = () => setIsVisiblePass((prev) => !prev);
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -85,14 +89,28 @@ export const LoginForm = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="******"
-                      type="password"
-                      autoComplete="off"
-                    />
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="******"
+                        type={isVisiblePass ? "text" : "password"}
+                        autoComplete="off"
+                      />
+                      {isVisiblePass ? (
+                        <EyeOff
+                          className="absolute bottom-2 right-2 w-4 h-4 text-muted-foreground cursor-pointer"
+                          onClick={toggleVisblePass}
+                        />
+                      ) : (
+                        <Eye
+                          className="absolute bottom-2 right-2 w-4 h-4 text-muted-foreground cursor-pointer"
+                          onClick={toggleVisblePass}
+                        />
+                      )}
+                    </div>
                   </FormControl>
+
                   <FormMessage />
                 </FormItem>
               )}
